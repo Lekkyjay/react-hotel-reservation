@@ -40,8 +40,15 @@ export const GlobalContextProvider = ({ children }) => {
     return tempItems;
   }
 
+  const getRoom = slug => {
+    //create a copy of rooms array in tempRooms
+    let tempRooms = [...data.rooms];
+    const room = tempRooms.find(room => room.slug === slug);
+    return room;
+  };
+
   return (
-    <GlobalContext.Provider value={{ ...data }}>
+    <GlobalContext.Provider value={{ ...data, getRoom }}>
       { children }
     </GlobalContext.Provider>
   )
