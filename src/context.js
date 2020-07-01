@@ -9,7 +9,6 @@ export const GlobalContextProvider = ({ children }) => {
     sortedRooms: [],
     featuredRooms: [],
     loading: true,
-    /*
     type: "all",
     capacity: 1,
     price: 0,
@@ -18,15 +17,15 @@ export const GlobalContextProvider = ({ children }) => {
     minSize: 0,
     maxSize: 0,
     breakfast: false,
-    pets: false*/
+    pets: false
   })
 
   useEffect(() => {
     let rooms = formatData(items)
     let featuredRooms = rooms.filter(room => room.featured === true);
-    // let maxPrice = Math.max(...rooms.map(item => item.price));
-    // let maxSize = Math.max(...rooms.map(item => item.size));
-    setData({rooms, featuredRooms, sortedRooms: rooms, loading: false});
+    let maxPrice = Math.max(...rooms.map(item => item.price));
+    let maxSize = Math.max(...rooms.map(item => item.size));
+    setData({rooms, featuredRooms, sortedRooms: rooms, loading: false, price: maxPrice, maxPrice, maxSize});
   }, [])
 
   const formatData = (items) => {
@@ -47,8 +46,37 @@ export const GlobalContextProvider = ({ children }) => {
     return room;
   };
 
+  const handleChange = event => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    console.log('name:', name, 'value:', value);
+
+    // setData(
+    //   {
+    //     [name]: value
+    //   },
+    //   this.filterRooms
+    // );
+  };
+
+  const filterRooms = () => {
+    console.log('hello');
+    
+    // let {
+    //   rooms,
+    //   type,
+    //   capacity,
+    //   price,
+    //   minSize,
+    //   maxSize,
+    //   breakfast,
+    //   pets
+    // } = this.state;
+  }
+
   return (
-    <GlobalContext.Provider value={{ ...data, getRoom }}>
+    <GlobalContext.Provider value={{ ...data, getRoom, handleChange }}>
       { children }
     </GlobalContext.Provider>
   )
