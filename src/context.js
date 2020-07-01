@@ -25,7 +25,15 @@ export const GlobalContextProvider = ({ children }) => {
     let featuredRooms = rooms.filter(room => room.featured === true);
     let maxPrice = Math.max(...rooms.map(item => item.price));
     let maxSize = Math.max(...rooms.map(item => item.size));
-    setData({rooms, featuredRooms, sortedRooms: rooms, loading: false, price: maxPrice, maxPrice, maxSize});
+    setData({...data,
+      rooms, 
+      featuredRooms, 
+      sortedRooms: rooms, 
+      loading: false, 
+      price: maxPrice, 
+      maxPrice, 
+      maxSize
+    });
   }, [])
 
   const formatData = (items) => {
@@ -53,10 +61,10 @@ export const GlobalContextProvider = ({ children }) => {
     console.log('name:', name, 'value:', value);
 
     // setData(
-    //   {
+    //   {...data,
     //     [name]: value
     //   },
-    //   this.filterRooms
+      filterRooms()
     // );
   };
 
