@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import items from './data'
+import Client from "./Contentful"
 
 export const GlobalContext = createContext()
 export const GlobalContextProvider = ({ children }) => {
@@ -19,22 +19,33 @@ export const GlobalContextProvider = ({ children }) => {
     pets: false
   })
 
-  useEffect(() => {
-    let rooms = formatData(items)
-    let featuredRooms = rooms.filter(room => room.featured === true);
-    let maxPrice = Math.max(...rooms.map(item => item.price));
-    let maxSize = Math.max(...rooms.map(item => item.size));
-    setData({...data,
-      rooms, 
-      featuredRooms, 
-      sortedRooms: rooms, 
-      loading: false, 
-      price: maxPrice, 
-      maxPrice, 
-      maxSize
-    });
-    console.log('data after first useEffect fired', data);
-  }, [])
+  const getData = async() => {
+    try {
+      let response = await Client.getEntries({
+        content_type: 'hotelRoomReservation',
+        // order: 'sys.createdAt'
+        // order: 'fields.price'
+        // order: '-fields.price'
+      })
+      let rooms = formatData(response.items)
+      let featuredRooms = rooms.filter(room => room.featured === true);
+      let maxPrice = Math.max(...rooms.map(item => item.price));
+      let maxSize = Math.max(...rooms.map(item => item.size));
+      setData({...data,
+        rooms, 
+        featuredRooms, 
+        sortedRooms: rooms, 
+        loading: false, 
+        price: maxPrice, 
+        maxPrice, 
+        maxSize
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => { getData() }, [])
 
   const [roomType, setRoomType] = useState('')
   const [roomFiltered, setRoomFiltered] = useState(false)
