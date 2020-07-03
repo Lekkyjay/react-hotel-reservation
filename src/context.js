@@ -34,7 +34,11 @@ export const GlobalContextProvider = ({ children }) => {
       maxPrice, 
       maxSize
     });
+    console.log('data after first useEffect fired', data);
   }, [])
+
+  const [roomType, setRoomType] = useState('')
+  const [roomFiltered, setRoomFiltered] = useState(false)
 
   const formatData = (items) => {
     let tempItems = items.map(item => {
@@ -58,29 +62,66 @@ export const GlobalContextProvider = ({ children }) => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
-    console.log('name:', name, 'value:', value);
-
-    // setData(
-    //   {...data,
-    //     [name]: value
-    //   },
-      filterRooms()
-    // );
+    setData({...data, [name]: value});  //this is a very efficient piece of code for updating state!!!!
+    setRoomType(value)
+    setRoomFiltered(true)
+    console.log('data after handleChange fired', data);
+    console.log('roomFiltered:', roomFiltered);
+    
   };
 
+  useEffect(() => {
+    if (roomFiltered) {
+      console.log('useEffect fired from handleChange!!!!!');
+      console.log('data after handleChange useEffect', data);
+      filterRooms()
+    }
+  }, [roomType])
+
   const filterRooms = () => {
-    console.log('hello');
+    let {rooms, type, capacity, price, minSize, maxSize, breakfast, pets } = data;
+    let tempRooms = [...rooms]
+    capacity = parseInt(capacity);
+    price = parseInt(price);
+    console.log('type:', type);
+    console.log('tempRooms before filter:', tempRooms);
     
-    // let {
-    //   rooms,
-    //   type,
-    //   capacity,
-    //   price,
-    //   minSize,
-    //   maxSize,
-    //   breakfast,
-    //   pets
-    // } = this.state;
+    
+    // filter by type
+    if (type !== "all") {
+      tempRooms = tempRooms.filter(room => room.type === type);
+      console.log('Type inside if conditional:', type);
+      console.log('tempRooms after filter:', tempRooms);
+      console.log('data after filter:', data);
+    }
+    
+    
+    // filter by capacity
+    if (capacity !== 1) {
+      tempRooms = tempRooms.filter(room => room.capacity >= capacity);
+    }
+    // filter by price
+    tempRooms = tempRooms.filter(room => room.price <= price);
+
+    //filter by size
+    tempRooms = tempRooms.filter(
+      room => room.size >= minSize && room.size <= maxSize
+    );
+
+    //filter by breakfast
+    if (breakfast) {
+      tempRooms = tempRooms.filter(room => room.breakfast === true);
+    }
+
+    //filter by pets
+    if (pets) {
+      tempRooms = tempRooms.filter(room => room.pets === true);
+    }
+    
+    if (roomFiltered) {
+      setData({...data, sortedRooms: tempRooms});
+      console.log('data after final setData:', data);
+    }
   }
 
   return (
