@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from 'react'
 import items from './data'
 
 export const GlobalContext = createContext()
-
 export const GlobalContextProvider = ({ children }) => {
   const [data, setData] = useState({
     rooms: [],
@@ -117,7 +116,7 @@ export const GlobalContextProvider = ({ children }) => {
     if (pets) {
       tempRooms = tempRooms.filter(room => room.pets === true);
     }
-    
+
     if (roomFiltered) {
       setData({...data, sortedRooms: tempRooms});
       console.log('data after final setData:', data);
